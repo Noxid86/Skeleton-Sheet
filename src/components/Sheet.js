@@ -1,44 +1,14 @@
-import React, { useState } from 'react';
-import Stat from './Stat';
-import Skill from './Skill';
-import Throw from './Throw';
-import Cell from './Cell';
+import React from 'react';
+import Group from './Group';
 import './Sheet.css';
 
-// set dictionary for component lookup
-var components = {
-    Stat: Stat,
-    Skill: Skill,
-    Throw: Throw,
-    Cell: Cell
-}
-
 function Sheet(props) {
-
-    // render children 
-    function renderChildren(children){
-            return children.map((child, index)=>{
-                const TagName = components[child.type];
-                return <TagName key={index} data={child}/>
-        }); 
-    };
-
-    let sheet = props.sheet.map((group)=>{
-        let style = {
-            display: 'grid',
-            gridGap: '0.5rem',
-            padding: '0.5rem',
-            gridTemplateColumns: group.width+'fr',
-            gridTemplateRows: group.height+'fr',
-            gridRow: 'span '+group.height,
-            gridColumn: 'span '+group.width,
-        }
-
-        return (
-            <div className="group" key={group.label} style={style}>
-                {renderChildren(group.children)}
-            </div>    
-        )})
+    // A Sheet is an array of 'group' objects, each with properties and children.
+    // Map each group to it's own group component and pass the group's properties and children as props to that component
+    let sheet = props.sheet.map((group, index)=>{
+        // Render each group and pass data within the group as props to that group
+        return <Group key={'Group'+index} {...props.sheet[index]}/>
+    })
 
     return (
         <div className="Sheet">

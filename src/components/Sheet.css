@@ -1,13 +1,12 @@
 .Sheet {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: repeat(16, 1fr);
-    grid-gap: 1rem;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    height: 1200px;
+    grid-gap: 0.5rem;
+    padding: 0.5rem;
     background-color: azure;
-    border: 1px solid black;
-    max-width: 1200px;
     margin: auto;
-    margin-top: 3rem;
 }
 
 .group {

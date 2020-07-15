@@ -1,0 +1,15 @@
+.Toolbar {
+    margin-top: 1rem;
+    width: 100%;
+    background-color: beige;
+    height: 100px;
+}
+
+.Toolbar>button {
+    background-color: bisque;
+}
+
+.Toolbar>p{
+    float: right;
+    margin-top: 1rem;
+}
