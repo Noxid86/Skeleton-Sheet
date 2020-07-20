@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Sheet from './components/Sheet';
 import Toolbar from './components/Toolbar';
 import './App.css';
@@ -84,11 +84,30 @@ function App() {
       ]
     }, 
   ]
+  let newGroup =     {
+    type: 'group',
+    children: [
+      {type: 'Cell', name: 'Strength', abbreviation: 'STR', value: 10},
+      {type: 'Cell', name: 'Strength', abbreviation: 'STR', value: 10},
+      {type: 'Cell', name: 'Dex', abbreviation: 'DEX', value: 10},
+      {type: 'Cell', name: 'Constitution', abbreviation: 'CON', value: 10},
+      {type: 'Cell', name: 'Intelligence', abbreviation: 'INT', value: 10},
+      {type: 'Cell', name: 'Wisdom', abbreviation: 'WIS', value: 10},
+      {type: 'Cell', name: 'Charisma', abbreviation: 'CHA', value: 10},
+    ]
+  }
 
+  const [sheet, setSheet] = useState(cellTest);
+
+  function addGroup(){
+    setSheet(prevSheet => [...prevSheet, newGroup])
+    console.log(sheet)
+  }
+  
   return (
     <div className="App">
-      <Toolbar />
-      <Sheet sheet={cellTest}/>
+      <Toolbar addGroup={addGroup} sheet={sheet} setSheet={setSheet}/>
+      <Sheet sheet={sheet}/>
     </div>
   );
 }
