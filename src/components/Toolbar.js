@@ -5,10 +5,9 @@ import './Toolbar.css';
 function Toolbar(props) {
 
     return (
-        <div className='Toolbar'>
-            <button onClick={props.addGroup}>Add Group</button>
-            <button>Add Cell</button>
-            <p>SELECT ELEMENT</p>
+        <div className='Toolbar' style={{width: '100%', height: "100px", backgroundColor: 'gray'}}>
+            <button onClick={function(){console.log('click')}} style={{maxWidth: '100px'}}>Add Group</button>
+            <button onClick={function(){console.log('click')}} style={{maxWidth: '100px'}}>Add Element</button>
         </div>  
     );
 }

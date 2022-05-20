@@ -2,78 +2,69 @@ import React, { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { compareArraysAsSet } from '@testing-library/jest-dom/dist/utils';
+import Toolbar from './Toolbar';
+import Group from './Group';
 
-// followed tutorial, why seperate these? 
-const itemsFromBackend = [
+const elementsFromBackend = [
     { id: uuid(), content: 'First Task' },
     { id: uuid(), content: 'Second Task' },
 ]
-const columnsFromBackend = {
+const groupsFromBackend = {
     [uuid()]: {
+        height: 2,
+        width: 12,
         name: 'Requested',
-        items: [...itemsFromBackend]
-    },
-    [uuid()]: {
-        name: 'Todo',
-        items: []
-    },
-    [uuid()]: {
-        name: 'In Progress',
-        items: []
-    },
-    [uuid()]: {
-        name: 'Complete',
-        items: []
+        elements: [...elementsFromBackend]
     }
 }
 
-const sheet = {
-    group: {
-        title: "Stats",
-        display_options: null, // this will get complicated, but each group will be repositionable
-        contents: [
-            { type: "static_stat", name: "strength", value: 14 },
-            { type: "static_stat", name: "dexterity", value: 12 },
-            { type: "static_stat", name: "constitution", value: 10 },
-        ]
+// const sheet = {
+//     group: {
+//         title: "Stats",
+//         display_options: null, // this will get complicated, but each group will be repositionable
+//         contents: [
+//             { type: "static_stat", name: "strength", value: 14 },
+//             { type: "static_stat", name: "dexterity", value: 12 },
+//             { type: "static_stat", name: "constitution", value: 10 },
+//         ]
 
-    }
-}
-const onDragEnd = ({ source, destination }, columns, setColumns) => {
+//     }
+// }
+const onDragEnd = ({ source, destination }, groups, setGroups) => {
     if (!destination) return;
     if (source.droppableId !== destination.droppableId) {
-      // Copy the column object the dragged item left
-      const sourceColumn = columns[source.droppableId];
-      // Copy the column object the dragged item was dropped in
-      const destColumn = columns[destination.droppableId];
-      // Copy the items present in the column the dragged item left
-      const sourceItems = [...sourceColumn.items];
-      // Copy the items present in the column the dragged item was dropped in
-      const destItems = [...destColumn.items];
+      // Copy the group object the dragged element left
+      const sourceGroup = groups[source.droppableId];
+      // Copy the group object the dragged element was dropped in
+      const destGroup = groups[destination.droppableId];
+      // Copy the elements present in the group the dragged element left
+      const sourceElements = [...sourceGroup.elements];
+      // Copy the elements present in the group the dragged element was dropped in
+      const destElements = [...destGroup.elements];
       console.log(source)
-      const [removed] = sourceItems.splice(source.index, 1);
-      destItems.splice(destination.index, 0, removed);
-      setColumns({
-        ...columns,
+      const [removed] = sourceElements.splice(source.index, 1);
+      destElements.splice(destination.index, 0, removed);
+      setGroups({
+        ...groups,
         [source.droppableId]: {
-          ...sourceColumn,
-          items: sourceItems
+          ...sourceGroup,
+          elements: sourceElements
         },
         [destination.droppableId]: {
-          ...destColumn,
-          items: destItems
+          ...destGroup,
+          elements: destElements
         }
       });
     } else {
-      const column = columns[source.droppableId];
-      const copiedItems = [...column.items];
-      const [removed] = copiedItems.splice(source.index, 1);
-      copiedItems.splice(destination.index, 0, removed);
-      setColumns({
-        ...columns,
+      const group = groups[source.droppableId];
+      const copiedElements = [...group.elements];
+      const [removed] = copiedElements.splice(source.index, 1);
+      copiedElements.splice(destination.index, 0, removed);
+      setGroups({
+        ...groups,
         [source.droppableId]: {
-          ...column,
-          items: copiedItems
+          ...group,
+          elements: copiedElements
         }
       });
     }
@@ -81,57 +72,14 @@ const onDragEnd = ({ source, destination }, columns, setColumns) => {
 function Sheet(props) {
     // A Sheet is an array of 'group' objects, each with properties and children.
     // Map each group to it's own group component and pass the group's properties and children as props to that component
-    const [columns, setColumns] = useState(columnsFromBackend);
-    const [items, setItems] = useState(itemsFromBackend);
+    const [groups, setGroups] = useState(groupsFromBackend);
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', height: '100%' }}>
-            <DragDropContext onDragEnd={result => onDragEnd(result, columns, setColumns)}>
-                {Object.entries(columns).map(([id, column]) => {
+            <DragDropContext onDragEnd={result => onDragEnd(result, groups, setGroups)}>
+                {Object.entries(groups).map(([id, group]) => {
                     return (
-                        <div style={{ margin: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%' }}>
-                            <h1>{column.name}</h1>
-                            <Droppable droppableId={id} key={id}>
-                                {(provided, snapshot) => {
-                                    return (
-                                        <div {...provided.droppableProps} ref={provided.innerRef}
-                                            style={{
-                                                background: snapshot.isDraggingOver ? 'lightblue' : 'lightgrey',
-                                                padding: 4,
-                                                width: 250,
-                                                minHeight: 500,
-                                                border: "1px solid black"
-                                            }}>
-                                            {column.items.map(function (item, index) {
-                                                return <Draggable key={item.id} draggableId={item.id} index={index}>
-                                                    {(provided, snapshot) => {
-                                                        return (
-                                                            <div
-                                                                ref={provided.innerRef}
-                                                                {...provided.draggableProps}
-                                                                {...provided.dragHandleProps}
-                                                                style={{
-                                                                    userSelect: 'none',
-                                                                    padding: 16,
-                                                                    margin: '0 0 8px 0',
-                                                                    minHeight: '50px',
-                                                                    backgroundColor: snapshot.isDragging ? '#263b4a' : '#456C86',
-                                                                    color: 'white',
-                                                                    ...provided.draggableProps.style
-                                                                }}
-                                                            >
-                                                                {item.content}
-                                                            </div>
-                                                        )
-                                                    }}
-                                                </Draggable>
-                                            })}
-                                            {provided.placeholder}
-                                        </div>
-                                    )
-                                }}
-                            </Droppable>
-                        </div>
+                        <Group id={id} key={id} group={group}/>
                     )
                 })}
             </DragDropContext>

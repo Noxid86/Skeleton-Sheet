@@ -1,21 +1,15 @@
 import React, {useState} from 'react';
 import Sheet from './components/Sheet';
-import Toolbar from './components/Toolbar';
 import './App.css';
-
+import Toolbar from './components/Toolbar';
 
 function App() {
-  const [sheet, setSheet] = useState();
 
-  function addGroup(){
-    setSheet(prevSheet => [...prevSheet ])
-    console.log(sheet)
-  }
   
   return (
     <div className="App">
-      {/* <Toolbar addGroup={addGroup} sheet={sheet} setSheet={setSheet}/> */}
-      <Sheet sheet={sheet}/>
+      <Toolbar/>
+      <Sheet/>
     </div>
   );
 }
